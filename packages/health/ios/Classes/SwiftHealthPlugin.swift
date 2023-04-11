@@ -51,6 +51,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
     let SLEEP_CORE = "SLEEP_CORE"
     let SLEEP_DEEP = "SLEEP_DEEP"
     let SLEEP_REM = "SLEEP_REM"
+    let SLEEP_CORE = "SLEEP_CORE"
+    let SLEEP_DEEP = "SLEEP_DEEP"
+    let SLEEP_REM = "SLEEP_REM"
   let SLEEP_AWAKE = "SLEEP_AWAKE"
   let SLEEP_DEEP = "SLEEP_DEEP"
   let SLEEP_REM = "SLEEP_REM"
@@ -527,6 +530,15 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         if dataTypeKey == self.SLEEP_AWAKE {
           samplesCategory = samplesCategory.filter { $0.value == 2 }
         }
+                if (dataTypeKey == self.SLEEP_CORE) {
+                    samplesCategory = samplesCategory.filter { $0.value == 3 }
+                }
+                if (dataTypeKey == self.SLEEP_DEEP) {
+                    samplesCategory = samplesCategory.filter { $0.value == 4 }
+                }
+                if (dataTypeKey == self.SLEEP_REM) {
+                    samplesCategory = samplesCategory.filter { $0.value == 5 }
+                }
         if dataTypeKey == self.SLEEP_DEEP {
           samplesCategory = samplesCategory.filter { $0.value == 3 }
         }
@@ -865,9 +877,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
 
     // Set up iOS 13 specific types (ordinary health data types)
         if #available(iOS 16.0, *) {
-            dataTypesDict[SLEEP_CORE] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
+            dataTypesDict[SLEEP_CORE] = HkSampleType.categoryType(forIdentifier: .sleepAnalysis)!
             dataTypesDict[SLEEP_DEEP] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
-            dataTypesDict[SLEEP_REM] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
+            dataTypesDict[SLEEP_REM] = HkSampleType.categoryType(forIdentifier: .sleepAnalysis)!
         }
 
     if #available(iOS 13.0, *) {
