@@ -819,9 +819,9 @@ public class SwiftHealthPlugin: NSObject, FlutterPlugin {
         
         // Set up iOS 13 specific types (ordinary health data types)
         if #available(iOS 16.0, *) {
-            dataTypesDict[SLEEP_CORE] = HkSampleType.categoryType(forIdentifier: .sleepAnalysis)!
+            dataTypesDict[SLEEP_CORE] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
             dataTypesDict[SLEEP_DEEP] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
-            dataTypesDict[SLEEP_REM] = HkSampleType.categoryType(forIdentifier: .sleepAnalysis)!
+            dataTypesDict[SLEEP_REM] = HKSampleType.categoryType(forIdentifier: .sleepAnalysis)!
         }
 
         if #available(iOS 13.0, *) {
