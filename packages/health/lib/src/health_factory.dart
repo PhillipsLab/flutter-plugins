@@ -455,7 +455,6 @@ class HealthFactory {
       'endTime': endTime.millisecondsSinceEpoch
     };
     final fetchedDataPoints = await _channel.invokeMethod('getData', args);
-    print(fetchedDataPoints);
 
     if (fetchedDataPoints != null) {
       final mesg = <String, dynamic>{
@@ -481,8 +480,6 @@ class HealthFactory {
     final device = message["deviceId"];
     final unit = _dataTypeToUnit[dataType]!;
     final list = dataPoints.map<HealthDataPoint>((e) {
-      print(e);
-      print(dataType);
       // Handling different [HealthValue] types
       HealthValue value;
       if (dataType == HealthDataType.AUDIOGRAM) {
@@ -491,8 +488,6 @@ class HealthFactory {
         value = WorkoutHealthValue.fromJson(e);
       } else if (dataType == HealthDataType.ELECTROCARDIOGRAM) {
         value = ElectrocardiogramHealthValue.fromJson(e);
-      } else if (dataType == HealthDataType.SLEEP_IN_BED) {
-        value = NumericHealthValue(0);
       } else {
         value = NumericHealthValue(e['value']);
       }
@@ -500,7 +495,6 @@ class HealthFactory {
       final DateTime to = DateTime.fromMillisecondsSinceEpoch(e['date_to']);
       final String sourceId = e["source_id"];
       final String sourceName = e["source_name"];
-      print(value);
       return HealthDataPoint(
         value,
         dataType,
@@ -550,12 +544,10 @@ class HealthFactory {
         return 1;
       case HealthDataType.SLEEP_AWAKE:
         return 2;
-      case HealthDataType.SLEEP_CORE:
-        return 3;
       case HealthDataType.SLEEP_DEEP:
-        return 4;
+        return 3;
       case HealthDataType.SLEEP_REM:
-        return 5;
+        return 4;
       case HealthDataType.HEADACHE_UNSPECIFIED:
         return 0;
       case HealthDataType.HEADACHE_NOT_PRESENT:
