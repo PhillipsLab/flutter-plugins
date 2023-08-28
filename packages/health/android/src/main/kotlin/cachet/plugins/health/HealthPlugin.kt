@@ -1,16 +1,18 @@
 package cachet.plugins.health
 
+// import androidx.compose.runtime.mutableStateOf
+
+// Health Connect
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Handler
 import android.os.Build
+import android.os.Handler
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.NonNull
-// import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
@@ -30,8 +32,8 @@ import com.google.android.gms.fitness.Fitness
 import com.google.android.gms.fitness.FitnessActivities
 import com.google.android.gms.fitness.FitnessOptions
 import com.google.android.gms.fitness.data.*
-import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.request.DataDeleteRequest
+import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.request.SessionInsertRequest
 import com.google.android.gms.fitness.request.SessionReadRequest
 import com.google.android.gms.fitness.result.DataReadResponse
@@ -48,21 +50,11 @@ import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.ActivityResultListener
 import io.flutter.plugin.common.PluginRegistry.Registrar
 import kotlinx.coroutines.*
+import java.time.*
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.*
-import java.util.concurrent.TimeUnit
-import java.time.*
 
-// Health Connect
-import androidx.health.connect.client.units.*
-import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.PermissionController
-import androidx.health.connect.client.request.ReadRecordsRequest
-import androidx.health.connect.client.time.TimeRangeFilter
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.*
-import androidx.health.connect.client.request.AggregateRequest
-import java.time.temporal.ChronoUnit
 
 const val GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1111
 const val HEALTH_CONNECT_RESULT_CODE = 16969
@@ -103,6 +95,10 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     private var MOVE_MINUTES = "MOVE_MINUTES"
     private var DISTANCE_DELTA = "DISTANCE_DELTA"
     private var WATER = "WATER"
+    private var RESTING_HEART_RATE = "RESTING_HEART_RATE"
+    private var BASAL_ENERGY_BURNED = "BASAL_ENERGY_BURNED"
+    private var FLIGHTS_CLIMBED = "FLIGHTS_CLIMBED"
+    private var RESPIRATORY_RATE = "RESPIRATORY_RATE"
 
     // TODO support unknown?
     private var SLEEP_ASLEEP = "SLEEP_ASLEEP"
@@ -1513,7 +1509,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             result.success(stepsInInterval)
         } catch (e: Exception) {
             Log.i("FLUTTER_HEALTH::ERROR", "unable to return steps")
-            result.success(false)
+            result.success(null)
         }
     }
 
@@ -1617,7 +1613,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     var healthConnectStatus = HealthConnectClient.SDK_UNAVAILABLE
 
     fun checkAvailability() {
-        healthConnectStatus = HealthConnectClient.sdkStatus(context!!)
+        healthConnectStatus = HealthConnectClient.getSdkStatus(context!!)
         healthConnectAvailable = healthConnectStatus == HealthConnectClient.SDK_AVAILABLE
     }
 
@@ -2056,6 +2052,42 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                     "mealType" to (MapTypeToMealTypeHC[record.mealType] ?: MEAL_TYPE_UNKNOWN),
                     "date_from" to record.startTime.toEpochMilli(),
                     "date_to" to record.endTime.toEpochMilli(),
+                    "source_id" to "",
+                    "source_name" to metadata.dataOrigin.packageName,
+                )
+            )
+            is RestingHeartRateRecord -> return listOf(
+                mapOf<String, Any>(
+                    "value" to record.beatsPerMinute,
+                    "date_from" to record.time.toEpochMilli(),
+                    "date_to" to record.time.toEpochMilli(),
+                    "source_id" to "",
+                    "source_name" to metadata.dataOrigin.packageName,
+                )
+            )
+            is BasalMetabolicRateRecord -> return listOf(
+                mapOf<String, Any>(
+                    "value" to record.basalMetabolicRate.inKilocaloriesPerDay,
+                    "date_from" to record.time.toEpochMilli(),
+                    "date_to" to record.time.toEpochMilli(),
+                    "source_id" to "",
+                    "source_name" to metadata.dataOrigin.packageName,
+                )
+            )
+            is FloorsClimbedRecord -> return listOf(
+                mapOf<String, Any>(
+                    "value" to record.floors,
+                    "date_from" to record.startTime.toEpochMilli(),
+                    "date_to" to record.endTime.toEpochMilli(),
+                    "source_id" to "",
+                    "source_name" to metadata.dataOrigin.packageName,
+                )
+            )
+            is RespiratoryRateRecord -> return listOf(
+                mapOf<String, Any>(
+                    "value" to record.rate,
+                    "date_from" to record.time.toEpochMilli(),
+                    "date_to" to record.time.toEpochMilli(),
                     "source_id" to "",
                     "source_name" to metadata.dataOrigin.packageName,
                 )

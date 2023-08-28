@@ -61,6 +61,7 @@ const List<HealthDataType> dataTypesIOS = [
 /// enumeration.
 const List<HealthDataType> dataTypesAndroid = [
   HealthDataType.ACTIVE_ENERGY_BURNED,
+  HealthDataType.BASAL_ENERGY_BURNED,
   HealthDataType.BLOOD_GLUCOSE,
   HealthDataType.BLOOD_OXYGEN,
   HealthDataType.BLOOD_PRESSURE_DIASTOLIC,
@@ -74,6 +75,7 @@ const List<HealthDataType> dataTypesAndroid = [
   HealthDataType.STEPS,
   // HealthDataType.MOVE_MINUTES, // TODO: Find alternative for Health Connect
   HealthDataType.DISTANCE_DELTA,
+  HealthDataType.RESPIRATORY_RATE,
   HealthDataType.SLEEP_AWAKE,
   HealthDataType.SLEEP_ASLEEP,
   HealthDataType.SLEEP_LIGHT,
