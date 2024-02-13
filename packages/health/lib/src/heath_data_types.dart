@@ -58,6 +58,7 @@ enum HealthDataType {
   HEADACHE_SEVERE,
   HEADACHE_UNSPECIFIED,
   NUTRITION,
+  WHEELCHAIR_PUSHES,
 
   // Heart Rate events (specific to Apple Watch)
   HIGH_HEART_RATE_EVENT,
@@ -133,6 +134,7 @@ const List<HealthDataType> dataTypeKeysIOS = [
   HealthDataType.HEADACHE_UNSPECIFIED,
   HealthDataType.ELECTROCARDIOGRAM,
   HealthDataType.NUTRITION,
+  HealthDataType.WHEELCHAIR_PUSHES
 ];
 
 /// List of data types available on Android
@@ -197,6 +199,7 @@ const Map<HealthDataType, HealthDataUnit> dataTypeToUnit = {
   HealthDataType.RESTING_HEART_RATE: HealthDataUnit.BEATS_PER_MINUTE,
   HealthDataType.PUSH_COUNT: HealthDataUnit.COUNT,
   HealthDataType.STEPS: HealthDataUnit.COUNT,
+  HealthDataType.WHEELCHAIR_PUSHES: HealthDataUnit.COUNT
   HealthDataType.WAIST_CIRCUMFERENCE: HealthDataUnit.METER,
   HealthDataType.WALKING_HEART_RATE: HealthDataUnit.BEATS_PER_MINUTE,
   HealthDataType.WEIGHT: HealthDataUnit.KILOGRAM,
