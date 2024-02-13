@@ -96,6 +96,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     private var BASAL_ENERGY_BURNED = "BASAL_ENERGY_BURNED"
     private var FLIGHTS_CLIMBED = "FLIGHTS_CLIMBED"
     private var RESPIRATORY_RATE = "RESPIRATORY_RATE"
+    private var WHEELCHAIR_PUSHES = "WHEELCHAIR_PUSHES"
 
     // TODO support unknown?
     private var SLEEP_ASLEEP = "SLEEP_ASLEEP"
@@ -440,6 +441,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             SLEEP_IN_BED -> DataType.TYPE_SLEEP_SEGMENT
             WORKOUT -> DataType.TYPE_ACTIVITY_SEGMENT
             NUTRITION -> DataType.TYPE_NUTRITION
+            WHEELCHAIR_PUSHES -> DataType.WHEELCHAIR_PUSHES
             else -> throw IllegalArgumentException("Unsupported dataType: $type")
         }
     }
@@ -465,6 +467,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             SLEEP_IN_BED -> Field.FIELD_SLEEP_SEGMENT_TYPE
             WORKOUT -> Field.FIELD_ACTIVITY
             NUTRITION -> Field.FIELD_NUTRIENTS
+            WHEELCHAIR_PUSHES -> Field.FIELD_WHEELCHAIR_PUSHES
             else -> throw IllegalArgumentException("Unsupported dataType: $type")
         }
     }
@@ -1813,6 +1816,16 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 ),
             )
 
+            is WheelchairPushesRecord -> return listOf(
+                mapOf<String, Any> (
+                    "value" to record.count,
+                    "date_from" to record.startTime.toEpochMilli(),
+                    "date_to" to record.endTime.toEpochMilli(),
+                    "source_id" to "", 
+                    "source_name" to metadata.dataOrigin.packageName,
+                )
+            )
+
             is ActiveCaloriesBurnedRecord -> return listOf(
                 mapOf<String, Any>(
                     "value" to record.energy.inKilocalories,
@@ -1954,6 +1967,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 )
             )
 
+
             is NutritionRecord -> return listOf(
                 mapOf<String, Any>(
                     "calories" to record.energy!!.inKilocalories,
@@ -2004,6 +2018,14 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             STEPS -> StepsRecord(
                 startTime = Instant.ofEpochMilli(startTime),
                 endTime = Instant.ofEpochMilli(endTime),
+                count = value.toLong(),
+                startZoneOffset = null,
+                endZoneOffset = null,
+            )
+
+            WHEELCHAIR_PUSHES -> WheelchairPushesRecord(
+                startTime = Instant.ofEpochMilli(startTime),
+                endTime = Instant.ofEpochMilli(endTIme),
                 count = value.toLong(),
                 startZoneOffset = null,
                 endZoneOffset = null,
@@ -2145,6 +2167,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 rate = value,
                 zoneOffset = null,
             )
+
             // AGGREGATE_STEP_COUNT -> StepsRecord()
             BLOOD_PRESSURE_SYSTOLIC -> throw IllegalArgumentException("You must use the [writeBloodPressure] API ")
             BLOOD_PRESSURE_DIASTOLIC -> throw IllegalArgumentException("You must use the [writeBloodPressure] API ")
@@ -2337,6 +2360,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         BASAL_ENERGY_BURNED to BasalMetabolicRateRecord::class,
         FLIGHTS_CLIMBED to FloorsClimbedRecord::class,
         RESPIRATORY_RATE to RespiratoryRateRecord::class,
+        WHEELCHAIR_PUSHES to WheelchairPushesRecord::class,
         // MOVE_MINUTES to TODO: Find alternative?
         // TODO: Implement remaining types
         // "ActiveCaloriesBurned" to ActiveCaloriesBurnedRecord::class,
