@@ -91,6 +91,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
     private var BASAL_ENERGY_BURNED = "BASAL_ENERGY_BURNED"
     private var FLIGHTS_CLIMBED = "FLIGHTS_CLIMBED"
     private var RESPIRATORY_RATE = "RESPIRATORY_RATE"
+    private var WHEELCHAIR_PUSHES = "WHEELCHAIR_PUSHES"
 
     // TODO support unknown?
     private var SLEEP_ASLEEP = "SLEEP_ASLEEP"
@@ -442,6 +443,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             SLEEP_AWAKE -> DataType.TYPE_SLEEP_SEGMENT
             SLEEP_IN_BED -> DataType.TYPE_SLEEP_SEGMENT
             WORKOUT -> DataType.TYPE_ACTIVITY_SEGMENT
+            WHEELCHAIR_PUSHES -> DataType.WHEELCHAIR_PUSHES
             else -> throw IllegalArgumentException("Unsupported dataType: $type")
         }
     }
@@ -466,6 +468,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
             SLEEP_AWAKE -> Field.FIELD_SLEEP_SEGMENT_TYPE
             SLEEP_IN_BED -> Field.FIELD_SLEEP_SEGMENT_TYPE
             WORKOUT -> Field.FIELD_ACTIVITY
+            WHEELCHAIR_PUSHES -> DataType.WHEELCHAIR_PUSHES
             else -> throw IllegalArgumentException("Unsupported dataType: $type")
         }
     }
@@ -1795,6 +1798,16 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                     "source_name" to metadata.dataOrigin.packageName,
                 )
             )
+
+               is WheelchairPushesRecord -> return listOf(
+                mapOf<String, Any> (
+                    "value" to record.count,
+                    "date_from" to record.startTime.toEpochMilli(),
+                    "date_to" to record.endTime.toEpochMilli(),
+                    "source_id" to "", 
+                    "source_name" to metadata.dataOrigin.packageName,
+                )
+            )
             // is ExerciseSessionRecord -> return listOf(mapOf<String, Any>("value" to ,
             //                                             "date_from" to ,
             //                                             "date_to" to ,
@@ -1951,6 +1964,14 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
                 time = Instant.ofEpochMilli(startTime),
                 rate = value,
                 zoneOffset = null,
+            )
+
+             WHEELCHAIR_PUSHES -> WheelchairPushesRecord(
+                startTime = Instant.ofEpochMilli(startTime),
+                endTime = Instant.ofEpochMilli(endTIme),
+                count = value.toLong(),
+                startZoneOffset = null,
+                endZoneOffset = null,
             )
             // AGGREGATE_STEP_COUNT -> StepsRecord()
             BLOOD_PRESSURE_SYSTOLIC -> throw IllegalArgumentException("You must use the [writeBloodPressure] API ")
@@ -2118,6 +2139,7 @@ class HealthPlugin(private var channel: MethodChannel? = null) :
         BASAL_ENERGY_BURNED to BasalMetabolicRateRecord::class,
         FLIGHTS_CLIMBED to FloorsClimbedRecord::class,
         RESPIRATORY_RATE to RespiratoryRateRecord::class,
+        WHEELCHAIR_PUSHES to WheelchairPushesRecord::class,
         // MOVE_MINUTES to TODO: Find alternative?
         // TODO: Implement remaining types
         // "ActiveCaloriesBurned" to ActiveCaloriesBurnedRecord::class,

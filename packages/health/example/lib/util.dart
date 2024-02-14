@@ -78,4 +78,5 @@ const List<HealthDataType> dataTypesAndroid = [
   HealthDataType.WORKOUT,
   HealthDataType.RESTING_HEART_RATE,
   HealthDataType.FLIGHTS_CLIMBED,
+  HealthDataType.WHEELCHAIR_PUSHES,
 ];
